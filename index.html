@@ -7,7 +7,6 @@
 
 <style>
 
-/* Background */
 body {
     margin: 0;
     font-family: 'Georgia', serif;
@@ -18,7 +17,7 @@ body {
     color: white;
 }
 
-/* Soft overlay (less blur now) */
+/* Overlay (lighter so background visible) */
 .overlay {
     background: radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
     min-height: 100vh;
@@ -44,6 +43,7 @@ body {
     align-items: center;
 }
 
+/* Proposal Image */
 .boy-img {
     width: 220px;
     border-radius: 20px;
@@ -58,8 +58,41 @@ body {
     transform: translateY(0);
 }
 
+/* Big Headline */
+#headline {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    opacity: 0;
+    position: relative;
+    text-shadow:
+        0 0 10px hotpink,
+        0 0 20px pink,
+        0 0 30px rgba(255,105,180,0.7);
+    animation: headlinePulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes headlinePulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.03); }
+}
+
+/* Sparkles around headline */
+.sparkle {
+    position: absolute;
+    font-size: 18px;
+    animation: sparkleFloat 2s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+    0% { opacity: 0; transform: translateY(0) scale(0.8); }
+    50% { opacity: 1; transform: translateY(-5px) scale(1.1); }
+    100% { opacity: 0; transform: translateY(0) scale(0.8); }
+}
+
+/* Message */
 #message {
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 18px;
     max-width: 340px;
     min-height: 100px;
@@ -69,6 +102,7 @@ body {
 .fadeOut { opacity: 0; }
 .fadeIn { opacity: 1; }
 
+/* Buttons */
 .buttons {
     margin-top: 20px;
     position: relative;
@@ -106,7 +140,7 @@ button {
     margin: 0 auto;
 }
 
-/* Hearts */
+/* Hearts explosion */
 .heart {
     position: fixed;
     font-size: 22px;
@@ -135,29 +169,11 @@ button {
     }
 }
 
-/* Mobile fix */
+/* Mobile */
 @media (max-width: 600px) {
-
-    body {
-        background-size: cover;
-        background-position: center;
-    }
-
     .boy-img { width: 180px; }
-
-    #message {
-        font-size: 16px;
-        max-width: 90%;
-    }
-
-    button {
-        font-size: 14px;
-        padding: 8px 18px;
-    }
-
-    .buttons {
-        width: 220px;
-    }
+    #headline { font-size: 26px; }
+    #message { font-size: 16px; max-width: 90%; }
 }
 
 </style>
@@ -171,6 +187,8 @@ button {
 
 <div id="scene" class="scene">
     <img src="proposal.jpg" class="boy-img" id="boy">
+
+    <div id="headline"></div>
     <div id="message"></div>
 
     <div class="buttons" id="buttons">
@@ -193,9 +211,10 @@ const proposalText =
 "my forever.\n\n" +
 "Will you be mine? 💍❤️";
 
+const acceptedHeadline = "💖 Forever Begins Now 💍";
+
 const acceptedText =
-"She said YES! 💖\n\n" +
-"This is the happiest moment of my life.\n" +
+"You just made me the happiest man alive.\n\n" +
 "I promise to love you forever. ✨";
 
 let index = 0;
@@ -206,9 +225,7 @@ function startProposal() {
     document.getElementById("overlay").classList.add("zoom");
 
     document.getElementById("bgMusic").play().catch(()=>{});
-
-    const boy = document.getElementById("boy");
-    boy.classList.add("showBoy");
+    document.getElementById("boy").classList.add("showBoy");
 
     typeMessage();
     startPetals();
@@ -239,30 +256,15 @@ function noResponse() {
     yesBtn.style.display = "none";
     noBtn.style.display = "none";
 
-    messageBox.classList.add("fadeOut");
+    messageBox.innerHTML =
+        "Hmm… I think that’s not possible 😌<br><br>" +
+        "Because my heart already chose you. ❤️";
 
     setTimeout(() => {
-        messageBox.innerHTML =
-            "Hmm… I think that’s not possible 😌<br><br>" +
-            "Because my heart already chose you. ❤️";
-        messageBox.classList.remove("fadeOut");
-        messageBox.classList.add("fadeIn");
-    }, 600);
-
-    setTimeout(() => {
-        messageBox.classList.add("fadeOut");
-
-        setTimeout(() => {
-            messageBox.innerHTML = proposalText.replace(/\n/g, "<br>");
-            messageBox.classList.remove("fadeOut");
-            messageBox.classList.add("fadeIn");
-
-            yesBtn.style.display = "block";
-            yesBtn.classList.add("centerYes");
-
-        }, 600);
-
-    }, 3600);
+        messageBox.innerHTML = proposalText.replace(/\n/g, "<br>");
+        yesBtn.style.display = "block";
+        yesBtn.classList.add("centerYes");
+    }, 3000);
 }
 
 function celebrate() {
@@ -270,19 +272,31 @@ function celebrate() {
     const boy = document.getElementById("boy");
     boy.src = "celebration.jpg";
 
-    explodeHearts();
-
-    const messageBox = document.getElementById("message");
-
-    messageBox.classList.add("fadeOut");
-
-    setTimeout(() => {
-        messageBox.innerHTML = acceptedText.replace(/\n/g, "<br>");
-        messageBox.classList.remove("fadeOut");
-        messageBox.classList.add("fadeIn");
-    }, 600);
-
     document.getElementById("buttons").style.display = "none";
+
+    const headline = document.getElementById("headline");
+    headline.innerHTML = acceptedHeadline;
+    headline.style.opacity = 1;
+
+    addSparkles();
+
+    document.getElementById("message").innerHTML =
+        acceptedText.replace(/\n/g, "<br>");
+
+    explodeHearts();
+}
+
+function addSparkles() {
+    const headline = document.getElementById("headline");
+
+    for (let i = 0; i < 6; i++) {
+        const sparkle = document.createElement("span");
+        sparkle.classList.add("sparkle");
+        sparkle.innerText = "✨";
+        sparkle.style.top = Math.random() * 40 + "px";
+        sparkle.style.left = Math.random() * 200 - 100 + "px";
+        headline.appendChild(sparkle);
+    }
 }
 
 function explodeHearts() {
