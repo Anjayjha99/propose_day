@@ -14,10 +14,17 @@ body {
     background-size: cover;
     overflow: hidden;
     color: white;
+    animation: bgZoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes bgZoom {
+    from { background-size: 100%; }
+    to { background-size: 110%; }
 }
 
 .overlay {
-    background: rgba(0, 0, 0, 0.6);
+    background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.85) 100%);
+    backdrop-filter: blur(6px);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -28,12 +35,10 @@ body {
     transition: transform 3s ease;
 }
 
-.zoom {
-    transform: scale(1.08);
-}
+.zoom { transform: scale(1.05); }
 
 .gift {
-    font-size: 90px;
+    font-size: 85px;
     cursor: pointer;
     animation: glow 2s infinite alternate;
 }
@@ -42,10 +47,13 @@ body {
     display: none;
     flex-direction: column;
     align-items: center;
+    margin-top: -20px;
 }
 
 .boy-img {
-    width: 230px;
+    width: 220px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(255,105,180,0.5);
     opacity: 0;
     transform: translateY(40px);
     transition: all 1.2s ease;
@@ -71,8 +79,12 @@ body {
     font-size: 18px;
     max-width: 340px;
     min-height: 100px;
-    transition: all 0.5s ease;
+    transition: opacity 0.6s ease;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
 }
+
+.fadeOut { opacity: 0; }
+.fadeIn { opacity: 1; }
 
 .buttons {
     margin-top: 20px;
@@ -98,14 +110,12 @@ button {
     left: 30px;
 }
 
+#yesBtn:hover { transform: scale(1.1); }
+
 #noBtn {
     background: grey;
     color: white;
     right: 30px;
-}
-
-#yesBtn:hover {
-    transform: scale(1.1);
 }
 
 .heart {
@@ -116,7 +126,7 @@ button {
 
 @keyframes explode {
     to {
-        transform: translateY(-130px) scale(2);
+        transform: translateY(-150px) scale(2);
         opacity: 0;
     }
 }
@@ -138,7 +148,7 @@ button {
 .bg-heart {
     position: fixed;
     font-size: 18px;
-    opacity: 0.25;
+    opacity: 0.2;
     animation: floatUp 6s linear infinite;
 }
 
@@ -152,15 +162,23 @@ button {
     to { filter: drop-shadow(0 0 20px hotpink); }
 }
 
-/* Glow after YES */
-.glowScreen {
-    animation: screenGlow 1s ease;
-}
+@media (max-width: 600px) {
 
-@keyframes screenGlow {
-    0% { background: rgba(0,0,0,0.6); }
-    50% { background: rgba(255, 105, 180, 0.4); }
-    100% { background: rgba(0,0,0,0.6); }
+    .boy-img { width: 180px; }
+
+    #message {
+        font-size: 16px;
+        max-width: 90%;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px 18px;
+    }
+
+    .buttons { width: 220px; }
+
+    .gift { font-size: 70px; }
 }
 
 </style>
@@ -178,7 +196,7 @@ button {
 
     <div class="buttons">
         <button id="yesBtn" onclick="celebrate()">Yes ❤️</button>
-        <button id="noBtn" onmouseover="moveNo()">No 😢</button>
+        <button id="noBtn" onclick="noResponse()">No 😢</button>
     </div>
 </div>
 
@@ -234,10 +252,31 @@ function typeMessage() {
     }, 40);
 }
 
-function moveNo() {
-    const btn = document.getElementById("noBtn");
-    btn.style.top = Math.random() * 60 + "px";
-    btn.style.left = Math.random() * 150 + "px";
+function noResponse() {
+
+    const messageBox = document.getElementById("message");
+    const noBtn = document.getElementById("noBtn");
+
+    noBtn.style.display = "none";
+
+    messageBox.classList.add("fadeOut");
+
+    setTimeout(() => {
+        messageBox.innerHTML =
+            "Hmm… I think that’s not possible 😌<br><br>" +
+            "Because my heart already chose you. ❤️";
+        messageBox.classList.remove("fadeOut");
+        messageBox.classList.add("fadeIn");
+    }, 600);
+
+    setTimeout(() => {
+        messageBox.classList.add("fadeOut");
+        setTimeout(() => {
+            messageBox.innerHTML = proposalText.replace(/\n/g, "<br>");
+            messageBox.classList.remove("fadeOut");
+            messageBox.classList.add("fadeIn");
+        }, 600);
+    }, 3600);
 }
 
 function celebrate() {
@@ -248,17 +287,21 @@ function celebrate() {
 
     explodeHearts();
 
-    document.getElementById("message").innerHTML =
-        acceptedText.replace(/\n/g, "<br>");
+    const messageBox = document.getElementById("message");
+    messageBox.classList.add("fadeOut");
+
+    setTimeout(() => {
+        messageBox.innerHTML = acceptedText.replace(/\n/g, "<br>");
+        messageBox.classList.remove("fadeOut");
+        messageBox.classList.add("fadeIn");
+    }, 600);
 
     document.getElementById("yesBtn").style.display = "none";
     document.getElementById("noBtn").style.display = "none";
-
-    document.getElementById("overlay").classList.add("glowScreen");
 }
 
 function explodeHearts() {
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 45; i++) {
         const heart = document.createElement("div");
         heart.classList.add("heart");
         heart.innerText = "❤️";
