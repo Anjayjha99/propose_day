@@ -7,24 +7,20 @@
 
 <style>
 
+/* Background */
 body {
     margin: 0;
     font-family: 'Georgia', serif;
-    background: url("background.jpg") no-repeat center center fixed;
+    background: url("background.jpg") no-repeat center center;
     background-size: cover;
+    background-attachment: fixed;
     overflow: hidden;
     color: white;
-    animation: bgZoom 20s ease-in-out infinite alternate;
 }
 
-@keyframes bgZoom {
-    from { background-size: 100%; }
-    to { background-size: 110%; }
-}
-
+/* Soft overlay (less blur now) */
 .overlay {
-    background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.85) 100%);
-    backdrop-filter: blur(6px);
+    background: radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -32,46 +28,34 @@ body {
     flex-direction: column;
     text-align: center;
     padding: 20px;
-    transition: transform 3s ease;
+    transition: transform 2s ease;
 }
 
-.zoom { transform: scale(1.05); }
+.zoom { transform: scale(1.04); }
 
 .gift {
     font-size: 85px;
     cursor: pointer;
-    animation: glow 2s infinite alternate;
 }
 
 .scene {
     display: none;
     flex-direction: column;
     align-items: center;
-    margin-top: -20px;
 }
 
 .boy-img {
     width: 220px;
     border-radius: 20px;
-    box-shadow: 0 0 40px rgba(255,105,180,0.5);
+    box-shadow: 0 0 30px rgba(255,105,180,0.4);
     opacity: 0;
     transform: translateY(40px);
-    transition: all 1.2s ease;
+    transition: all 1s ease;
 }
 
 .showBoy {
     opacity: 1;
     transform: translateY(0);
-}
-
-.float {
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0); }
 }
 
 #message {
@@ -80,7 +64,6 @@ body {
     max-width: 340px;
     min-height: 100px;
     transition: opacity 0.6s ease;
-    text-shadow: 0 0 10px rgba(255,255,255,0.3);
 }
 
 .fadeOut { opacity: 0; }
@@ -101,7 +84,7 @@ button {
     border-radius: 25px;
     cursor: pointer;
     position: absolute;
-    transition: all 0.3s ease;
+    transition: 0.3s ease;
 }
 
 #yesBtn {
@@ -110,14 +93,20 @@ button {
     left: 30px;
 }
 
-#yesBtn:hover { transform: scale(1.1); }
-
 #noBtn {
     background: grey;
     color: white;
     right: 30px;
 }
 
+.centerYes {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    margin: 0 auto;
+}
+
+/* Hearts */
 .heart {
     position: fixed;
     font-size: 22px;
@@ -131,6 +120,7 @@ button {
     }
 }
 
+/* Petals */
 .petal {
     position: fixed;
     top: -20px;
@@ -145,24 +135,13 @@ button {
     }
 }
 
-.bg-heart {
-    position: fixed;
-    font-size: 18px;
-    opacity: 0.2;
-    animation: floatUp 6s linear infinite;
-}
-
-@keyframes floatUp {
-    from { transform: translateY(100vh); }
-    to { transform: translateY(-20vh); }
-}
-
-@keyframes glow {
-    from { filter: drop-shadow(0 0 8px pink); }
-    to { filter: drop-shadow(0 0 20px hotpink); }
-}
-
+/* Mobile fix */
 @media (max-width: 600px) {
+
+    body {
+        background-size: cover;
+        background-position: center;
+    }
 
     .boy-img { width: 180px; }
 
@@ -176,9 +155,9 @@ button {
         padding: 8px 18px;
     }
 
-    .buttons { width: 220px; }
-
-    .gift { font-size: 70px; }
+    .buttons {
+        width: 220px;
+    }
 }
 
 </style>
@@ -194,7 +173,7 @@ button {
     <img src="proposal.jpg" class="boy-img" id="boy">
     <div id="message"></div>
 
-    <div class="buttons">
+    <div class="buttons" id="buttons">
         <button id="yesBtn" onclick="celebrate()">Yes ❤️</button>
         <button id="noBtn" onclick="noResponse()">No 😢</button>
     </div>
@@ -229,11 +208,10 @@ function startProposal() {
     document.getElementById("bgMusic").play().catch(()=>{});
 
     const boy = document.getElementById("boy");
-    boy.classList.add("showBoy","float");
+    boy.classList.add("showBoy");
 
     typeMessage();
     startPetals();
-    startBackgroundHearts();
 }
 
 function typeMessage() {
@@ -247,7 +225,7 @@ function typeMessage() {
 
         if (index >= proposalText.length) {
             clearInterval(interval);
-            document.querySelector(".buttons").style.display = "block";
+            document.getElementById("buttons").style.display = "block";
         }
     }, 40);
 }
@@ -255,8 +233,10 @@ function typeMessage() {
 function noResponse() {
 
     const messageBox = document.getElementById("message");
+    const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
 
+    yesBtn.style.display = "none";
     noBtn.style.display = "none";
 
     messageBox.classList.add("fadeOut");
@@ -271,11 +251,17 @@ function noResponse() {
 
     setTimeout(() => {
         messageBox.classList.add("fadeOut");
+
         setTimeout(() => {
             messageBox.innerHTML = proposalText.replace(/\n/g, "<br>");
             messageBox.classList.remove("fadeOut");
             messageBox.classList.add("fadeIn");
+
+            yesBtn.style.display = "block";
+            yesBtn.classList.add("centerYes");
+
         }, 600);
+
     }, 3600);
 }
 
@@ -283,11 +269,11 @@ function celebrate() {
 
     const boy = document.getElementById("boy");
     boy.src = "celebration.jpg";
-    boy.classList.remove("float");
 
     explodeHearts();
 
     const messageBox = document.getElementById("message");
+
     messageBox.classList.add("fadeOut");
 
     setTimeout(() => {
@@ -296,8 +282,7 @@ function celebrate() {
         messageBox.classList.add("fadeIn");
     }, 600);
 
-    document.getElementById("yesBtn").style.display = "none";
-    document.getElementById("noBtn").style.display = "none";
+    document.getElementById("buttons").style.display = "none";
 }
 
 function explodeHearts() {
@@ -321,18 +306,7 @@ function startPetals() {
         petal.style.animationDuration = (Math.random() * 3 + 3) + "s";
         document.body.appendChild(petal);
         setTimeout(() => petal.remove(), 6000);
-    }, 700);
-}
-
-function startBackgroundHearts() {
-    setInterval(() => {
-        const heart = document.createElement("div");
-        heart.classList.add("bg-heart");
-        heart.innerText = "❤️";
-        heart.style.left = Math.random() * 100 + "vw";
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 6000);
-    }, 1500);
+    }, 800);
 }
 
 </script>
