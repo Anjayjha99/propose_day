@@ -9,7 +9,7 @@
 body {
     margin: 0;
     font-family: 'Georgia', serif;
-    background: url("background.png.png") no-repeat center center fixed;
+    background: url("background.jpg") no-repeat center center fixed;
     background-size: cover;
     overflow: hidden;
     color: white;
@@ -44,9 +44,9 @@ body {
 }
 
 .boy-img {
-    width: 200px;
+    width: 230px;
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(40px);
     transition: all 1.2s ease;
 }
 
@@ -55,17 +55,27 @@ body {
     transform: translateY(0);
 }
 
+.float {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+}
+
 #message {
     margin-top: 20px;
     font-size: 18px;
-    max-width: 320px;
-    min-height: 80px;
+    max-width: 340px;
+    min-height: 100px;
 }
 
 .buttons {
     margin-top: 20px;
     position: relative;
-    width: 250px;
+    width: 260px;
     height: 100px;
 }
 
@@ -93,13 +103,13 @@ button {
 
 .heart {
     position: fixed;
-    font-size: 20px;
+    font-size: 22px;
     animation: explode 1.5s ease forwards;
 }
 
 @keyframes explode {
     to {
-        transform: translateY(-120px) scale(2);
+        transform: translateY(-130px) scale(2);
         opacity: 0;
     }
 }
@@ -118,6 +128,18 @@ button {
     }
 }
 
+.bg-heart {
+    position: fixed;
+    font-size: 18px;
+    opacity: 0.25;
+    animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-20vh); }
+}
+
 @keyframes glow {
     from { filter: drop-shadow(0 0 8px pink); }
     to { filter: drop-shadow(0 0 20px hotpink); }
@@ -132,11 +154,11 @@ button {
 <div class="gift" onclick="startProposal()">🎁</div>
 
 <div id="scene" class="scene">
-    <img src="proposal.gif" class="boy-img" id="boy">
+    <img src="proposal.jpg" class="boy-img" id="boy">
     <div id="message"></div>
 
     <div class="buttons">
-        <button id="yesBtn" onclick="explodeHearts()">Yes ❤️</button>
+        <button id="yesBtn" onclick="celebrate()">Yes ❤️</button>
         <button id="noBtn" onmouseover="moveNo()">No 😢</button>
     </div>
 </div>
@@ -163,10 +185,13 @@ function startProposal() {
     document.getElementById("overlay").classList.add("zoom");
 
     document.getElementById("bgMusic").play().catch(()=>{});
-    document.getElementById("boy").classList.add("showBoy");
+
+    const boy = document.getElementById("boy");
+    boy.classList.add("showBoy","float");
 
     typeMessage();
     startPetals();
+    startBackgroundHearts();
 }
 
 function typeMessage() {
@@ -187,6 +212,15 @@ function moveNo() {
     const btn = document.getElementById("noBtn");
     btn.style.top = Math.random() * 60 + "px";
     btn.style.left = Math.random() * 150 + "px";
+}
+
+function celebrate() {
+
+    const boy = document.getElementById("boy");
+    boy.src = "celebration.jpg";
+    boy.classList.remove("float");
+
+    explodeHearts();
 }
 
 function explodeHearts() {
@@ -210,7 +244,18 @@ function startPetals() {
         petal.style.animationDuration = (Math.random() * 3 + 3) + "s";
         document.body.appendChild(petal);
         setTimeout(() => petal.remove(), 6000);
-    }, 500);
+    }, 700);
+}
+
+function startBackgroundHearts() {
+    setInterval(() => {
+        const heart = document.createElement("div");
+        heart.classList.add("bg-heart");
+        heart.innerText = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 6000);
+    }, 1500);
 }
 
 </script>
