@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will You Be Mine? 💍</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background: url("background.png.png") no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+    color: white;
+}
+
+.overlay {
+    background: rgba(0, 0, 0, 0.6);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+    transition: transform 3s ease;
+}
+
+.zoom {
+    transform: scale(1.08);
+}
+
+.gift {
+    font-size: 90px;
+    cursor: pointer;
+    animation: glow 2s infinite alternate;
+}
+
+.scene {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+.boy-img {
+    width: 200px;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1.2s ease;
+}
+
+.showBoy {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+    max-width: 320px;
+    min-height: 80px;
+}
+
+.buttons {
+    margin-top: 20px;
+    position: relative;
+    width: 250px;
+    height: 100px;
+}
+
+button {
+    padding: 10px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    position: absolute;
+    transition: all 0.3s ease;
+}
+
+#yesBtn {
+    background: hotpink;
+    color: white;
+    left: 30px;
+}
+
+#noBtn {
+    background: grey;
+    color: white;
+    right: 30px;
+}
+
+.heart {
+    position: fixed;
+    font-size: 20px;
+    animation: explode 1.5s ease forwards;
+}
+
+@keyframes explode {
+    to {
+        transform: translateY(-120px) scale(2);
+        opacity: 0;
+    }
+}
+
+.petal {
+    position: fixed;
+    top: -20px;
+    font-size: 20px;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes glow {
+    from { filter: drop-shadow(0 0 8px pink); }
+    to { filter: drop-shadow(0 0 20px hotpink); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay" id="overlay">
+
+<div class="gift" onclick="startProposal()">🎁</div>
+
+<div id="scene" class="scene">
+    <img src="proposal.gif" class="boy-img" id="boy">
+    <div id="message"></div>
+
+    <div class="buttons">
+        <button id="yesBtn" onclick="explodeHearts()">Yes ❤️</button>
+        <button id="noBtn" onmouseover="moveNo()">No 😢</button>
+    </div>
+</div>
+
+</div>
+
+<audio id="bgMusic" src="music.mp3" loop></audio>
+
+<script>
+
+const text =
+"From the moment you came into my life,\n" +
+"everything changed.\n\n" +
+"You are my happiness,\n" +
+"my safest place,\n" +
+"my forever.\n\n" +
+"Will you be mine? 💍❤️";
+
+let index = 0;
+
+function startProposal() {
+    document.querySelector(".gift").style.display = "none";
+    document.getElementById("scene").style.display = "flex";
+    document.getElementById("overlay").classList.add("zoom");
+
+    document.getElementById("bgMusic").play().catch(()=>{});
+    document.getElementById("boy").classList.add("showBoy");
+
+    typeMessage();
+    startPetals();
+}
+
+function typeMessage() {
+    const messageBox = document.getElementById("message");
+
+    const interval = setInterval(() => {
+        messageBox.innerHTML += 
+            text[index] === "\n" ? "<br>" : text[index];
+        index++;
+
+        if (index >= text.length) {
+            clearInterval(interval);
+        }
+    }, 40);
+}
+
+function moveNo() {
+    const btn = document.getElementById("noBtn");
+    btn.style.top = Math.random() * 60 + "px";
+    btn.style.left = Math.random() * 150 + "px";
+}
+
+function explodeHearts() {
+    for (let i = 0; i < 30; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerText = "❤️";
+        heart.style.left = 40 + Math.random() * 20 + "vw";
+        heart.style.top = 50 + Math.random() * 10 + "vh";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 1500);
+    }
+}
+
+function startPetals() {
+    setInterval(() => {
+        const petal = document.createElement("div");
+        petal.classList.add("petal");
+        petal.innerText = Math.random() > 0.5 ? "🌸" : "🌹";
+        petal.style.left = Math.random() * 100 + "vw";
+        petal.style.animationDuration = (Math.random() * 3 + 3) + "s";
+        document.body.appendChild(petal);
+        setTimeout(() => petal.remove(), 6000);
+    }, 500);
+}
+
+</script>
+
+</body>
+</html>
