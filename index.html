@@ -6,6 +6,7 @@
 <title>Will You Be Mine? 💍</title>
 
 <style>
+
 body {
     margin: 0;
     font-family: 'Georgia', serif;
@@ -70,6 +71,7 @@ body {
     font-size: 18px;
     max-width: 340px;
     min-height: 100px;
+    transition: all 0.5s ease;
 }
 
 .buttons {
@@ -77,6 +79,7 @@ body {
     position: relative;
     width: 260px;
     height: 100px;
+    display: none;
 }
 
 button {
@@ -99,6 +102,10 @@ button {
     background: grey;
     color: white;
     right: 30px;
+}
+
+#yesBtn:hover {
+    transform: scale(1.1);
 }
 
 .heart {
@@ -144,6 +151,18 @@ button {
     from { filter: drop-shadow(0 0 8px pink); }
     to { filter: drop-shadow(0 0 20px hotpink); }
 }
+
+/* Glow after YES */
+.glowScreen {
+    animation: screenGlow 1s ease;
+}
+
+@keyframes screenGlow {
+    0% { background: rgba(0,0,0,0.6); }
+    50% { background: rgba(255, 105, 180, 0.4); }
+    100% { background: rgba(0,0,0,0.6); }
+}
+
 </style>
 </head>
 
@@ -169,13 +188,18 @@ button {
 
 <script>
 
-const text =
+const proposalText =
 "From the moment you came into my life,\n" +
 "everything changed.\n\n" +
 "You are my happiness,\n" +
 "my safest place,\n" +
 "my forever.\n\n" +
 "Will you be mine? 💍❤️";
+
+const acceptedText =
+"She said YES! 💖\n\n" +
+"This is the happiest moment of my life.\n" +
+"I promise to love you forever. ✨";
 
 let index = 0;
 
@@ -196,14 +220,16 @@ function startProposal() {
 
 function typeMessage() {
     const messageBox = document.getElementById("message");
+    messageBox.innerHTML = "";
 
     const interval = setInterval(() => {
         messageBox.innerHTML += 
-            text[index] === "\n" ? "<br>" : text[index];
+            proposalText[index] === "\n" ? "<br>" : proposalText[index];
         index++;
 
-        if (index >= text.length) {
+        if (index >= proposalText.length) {
             clearInterval(interval);
+            document.querySelector(".buttons").style.display = "block";
         }
     }, 40);
 }
@@ -221,10 +247,18 @@ function celebrate() {
     boy.classList.remove("float");
 
     explodeHearts();
+
+    document.getElementById("message").innerHTML =
+        acceptedText.replace(/\n/g, "<br>");
+
+    document.getElementById("yesBtn").style.display = "none";
+    document.getElementById("noBtn").style.display = "none";
+
+    document.getElementById("overlay").classList.add("glowScreen");
 }
 
 function explodeHearts() {
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 40; i++) {
         const heart = document.createElement("div");
         heart.classList.add("heart");
         heart.innerText = "❤️";
